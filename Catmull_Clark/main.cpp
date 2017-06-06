@@ -6,6 +6,7 @@
 
 int SCREEN_WIDTH = 500;
 int SCREEN_HEIGHT = 500;
+int angleX = 0, angleY=0;
 float Ortho = 5;
 deque<Face *> faceQueue;
 deque<Edge *> edgeQueue;
@@ -24,7 +25,7 @@ void reshape(int w, int h)
 	//glOrtho(-Ortho*scale, Ortho*scale, -Ortho, Ortho,1.0,10.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(3, 3, 5, 0, 0, 0, 0, 1, 0);
+	gluLookAt(2, 2, 0, 0, 0, 0, 0, 1, 0);
 }
 
 void display()
@@ -39,12 +40,49 @@ void display()
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, cube_mat_diffuse);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, cube_mat_specular);
 
-	glBegin(GL_QUADS);        // Draw The Cube Using quads
-	for (int i = 0; i < faceQueue.size(); ++i)
-		faceQueue[i]->show();
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPushMatrix();	
+	{
+		glRotatef(angleX, 1.0f, 0.0f, 0.0f);
+		glRotatef(angleY, 0.0f, 1.0f, 0.0f);		
 
+		glBegin(GL_QUADS);        // Draw The Cube Using quads
+		for (int i = 0; i < faceQueue.size(); ++i)
+			faceQueue[i]->show();
+	}
+	glPopMatrix();
+	
 	glEnd();            // End Drawing The Cube
 	glFlush();
+}
+
+void keyboard(unsigned char key, int x, int y)
+{
+	switch (key)
+	{
+	case 'e'://up
+		angleX = -5;
+		angleY = 0;
+		glutPostRedisplay();
+		break;
+	case 'd'://down
+		angleX = 5;
+		angleY = 0;
+		glutPostRedisplay();
+		break;
+	case 's'://left
+		angleX = 0;
+		angleY = -5;
+		glutPostRedisplay();
+		break;
+	case 'f'://right
+		angleX = 0;
+		angleY = 5;
+		glutPostRedisplay();
+		break;
+	default:
+		break;
+	}
 }
 
 void initLight()
@@ -83,23 +121,7 @@ void initGeo()
 	Vertex *v5 = new Vertex(-1.0f, -1.0f,-1.0f);
 	Vertex *v6 = new Vertex(-1.0f, -1.0f, 1.0f);
 	Vertex *v7 = new Vertex(1.0f, -1.0f, 1.0f);
-
-	// 12 edges
-	//Edge *e0=new Edge(*v0, *v1);	// top
-	//Edge *e1 = new Edge(*v1, *v2);
-	//Edge *e2 = new Edge(*v2, *v3);
-	//Edge *e3 = new Edge(*v3, *v0);
-
-	//Edge *e4 = new Edge(*v0, *v4);	// left-right
-	//Edge *e5 = new Edge(*v1, *v5);
-	//Edge *e6 = new Edge(*v2, *v6);
-	//Edge *e7 = new Edge(*v3, *v7);
-
-	//Edge *e8 = new Edge(*v4, *v5);	// bottom
-	//Edge *e9 = new Edge(*v5, *v6);
-	//Edge *e10 = new Edge(*v6, *v7);
-	//Edge *e11 = new Edge(*v7, *v4);
-
+	
 	// 6 faces
 	Face *f0=new Face(*v0, *v1, *v2, *v3, vertexQueue, edgeQueue);//top
 	Face *f1=new Face(*v7, *v6, *v5, *v4, vertexQueue, edgeQueue);//bottom
@@ -125,43 +147,35 @@ bool subdivision(deque<Face *> &faceQueue,
 	int currentLevel = f->level;
 	while (f->level < l)
 	{
+		//  (a, edge_pointab, face_pointabcd, edge_pointda)
+		//	(b, edge_pointbc, face_pointabcd, edge_pointab)
+		//	(c, edge_pointcd, face_pointabcd, edge_pointbc)
+		//	(d, edge_pointda, face_pointabcd, edge_pointcd)
+
 		// 1. Calculate face point
 		Vertex *face_point = new Vertex(f->fMidVertex, f->level+1);
-		//Vec3f face_point = f->fMidVertex;
 
 		// 2. Calculate edge point
 		Vertex *edge_point1 = new Vertex(f->fEdgeList[0]->calEdgePoint(), f->level + 1);
 		Vertex *edge_point2 = new Vertex(f->fEdgeList[1]->calEdgePoint(), f->level + 1);
 		Vertex *edge_point3 = new Vertex(f->fEdgeList[2]->calEdgePoint(), f->level + 1);
 		Vertex *edge_point4 = new Vertex(f->fEdgeList[3]->calEdgePoint(), f->level + 1);
-		//Vec3f edge_point1 = f->fEdgeList[0]->calEdgePoint();
-		//Vec3f edge_point2 = f->fEdgeList[1]->calEdgePoint();
-		//Vec3f edge_point3 = f->fEdgeList[2]->calEdgePoint();
-		//Vec3f edge_point4 = f->fEdgeList[3]->calEdgePoint();
 
 		// 3. Calculate vertex point
 		Vertex *vertex_point1 = new Vertex(f->fVertexList[0]->calVertexPoint(), f->level + 1);
 		Vertex *vertex_point2 = new Vertex(f->fVertexList[1]->calVertexPoint(), f->level + 1);
 		Vertex *vertex_point3 = new Vertex(f->fVertexList[2]->calVertexPoint(), f->level + 1);
 		Vertex *vertex_point4 = new Vertex(f->fVertexList[3]->calVertexPoint(), f->level + 1);
-		//Vec3f vertex_point1 = f->fVertexList[0]->calVertexPoint();
-		//Vec3f vertex_point2 = f->fVertexList[1]->calVertexPoint();
-		//Vec3f vertex_point3 = f->fVertexList[2]->calVertexPoint();
-		//Vec3f vertex_point4 = f->fVertexList[3]->calVertexPoint();
 
 		faceQueue.push_back(new Face(*face_point, *edge_point1, *vertex_point2, *edge_point2, vertexQueue, edgeQueue, f->level + 1));
 		faceQueue.push_back(new Face(*face_point, *edge_point2, *vertex_point3, *edge_point3, vertexQueue, edgeQueue, f->level + 1));
 		faceQueue.push_back(new Face(*face_point, *edge_point3, *vertex_point4, *edge_point4, vertexQueue, edgeQueue, f->level + 1));
 		faceQueue.push_back(new Face(*face_point, *edge_point4, *vertex_point1, *edge_point1, vertexQueue, edgeQueue, f->level + 1));
 
-		//faceQueue.push_back(new Face(Vertex(face_point), Vertex(edge_point1), Vertex(vertex_point2), Vertex(edge_point2), l + 1));
-		//faceQueue.push_back(new Face(Vertex(face_point), Vertex(edge_point2), Vertex(vertex_point3), Vertex(edge_point3), l + 1));
-		//faceQueue.push_back(new Face(Vertex(face_point), Vertex(edge_point3), Vertex(vertex_point4), Vertex(edge_point4), l + 1));
-		//faceQueue.push_back(new Face(Vertex(face_point), Vertex(edge_point4), Vertex(vertex_point1), Vertex(edge_point1), l + 1));
-
 		faceQueue.pop_front();
 		// Get the next face to be subdivided
 		f = faceQueue.front();
+		// If the level 
 		if (f->level > currentLevel)
 		{
 			while (vertexQueue.front()->level == currentLevel)
@@ -185,11 +199,11 @@ int main(int argc, char *argv[])
 
 	initLight();
 	initGeo();
-
-	subdivision(faceQueue,edgeQueue,vertexQueue, 1);
+	subdivision(faceQueue,edgeQueue,vertexQueue, 2);
 
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
+	glutKeyboardFunc(keyboard);
 	glutMainLoop();
 
 	system("PAUSE ");

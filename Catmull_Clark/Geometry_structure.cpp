@@ -34,7 +34,6 @@ bool Vertex::operator ==(const Vertex &v)
 		abs(Pos.y - v.Pos.y) < Epsilon&&
 		abs(Pos.z - v.Pos.z) < Epsilon)
 		return true;
-
 	return false;
 }
 
@@ -42,15 +41,26 @@ Vec3f Edge::calEdgePoint()
 {
 	Vec3f edgePoint = (eFaceList[0]->fMidVertex +
 		eFaceList[1]->fMidVertex +
-		eMidVertex * 2) / 4;
+		eMidVertex) / 3;
 	return edgePoint;
 }
 
 bool Edge::operator==(const Edge &e)
 {
-	if (level == e.level &&
-		((eVertexList[0] == e.eVertexList[0] && eVertexList[1] == e.eVertexList[1]) ||
-		(eVertexList[0] == e.eVertexList[1] && eVertexList[1] == e.eVertexList[0])))
+	//if (level == e.level &&
+	//	((eVertexList[0] == e.eVertexList[0] && eVertexList[1] == e.eVertexList[1]) ||
+	//	(eVertexList[0] == e.eVertexList[1] && eVertexList[1] == e.eVertexList[0])))
+	//	return true;
+
+	// Edge1.v1==Edge2.v1 && Edge1.v2==Edge2.v2
+	bool v1v1 = (*eVertexList[0]) == (*e.eVertexList[0]);
+	bool v2v2 = (*eVertexList[1]) == (*e.eVertexList[1]);
+
+	// Edge1.v1==Edge2.v2 && Edge1.v2==Edge2.v1
+	bool v1v2 = (*eVertexList[1]) == (*e.eVertexList[0]);
+	bool v2v1 = (*eVertexList[0]) == (*e.eVertexList[1]);
+
+	if ((v1v1 && v2v2) || (v1v2 && v2v1))
 		return true;
 	return false;
 }
@@ -81,7 +91,7 @@ void Face::addVertex(Vertex &v, deque<Vertex *> &vertexQueue)
 void Face::addEdge(Vertex &v1, Vertex &v2, deque<Edge *> &edgeQueue)
 {	
 	// Edge(v1, v2,-1) represent it just a try
-	Edge *pos = findEdge(Edge(v1, v2,-1), edgeQueue);
+	Edge *pos = findEdge(Edge(v1, v2, -1), edgeQueue);
 	Edge *e1 = nullptr;
 	if (pos != nullptr)//edge exist	
 		e1 = pos;
