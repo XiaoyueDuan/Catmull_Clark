@@ -128,8 +128,6 @@
   <ItemGroup>
     <ClCompile Include="Geometry_structure.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="tmp.cpp" />
-    <ClCompile Include="tmp2.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

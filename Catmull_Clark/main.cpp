@@ -3,6 +3,7 @@
 #include <string> 
 #include "GL\glut.h"
 #include "Vertex.h"
+#include <math.h>
 
 int SCREEN_WIDTH = 500;
 int SCREEN_HEIGHT = 500;
@@ -123,12 +124,12 @@ void initGeo()
 	Vertex *v7 = new Vertex(1.0f, -1.0f, 1.0f);
 	
 	// 6 faces
-	Face *f0=new Face(*v0, *v1, *v2, *v3, vertexQueue, edgeQueue);//top
-	Face *f1=new Face(*v7, *v6, *v5, *v4, vertexQueue, edgeQueue);//bottom
-	Face *f2=new Face(*v1, *v5, *v6, *v2, vertexQueue, edgeQueue);//left
-	Face *f3=new Face(*v0, *v3, *v7, *v4, vertexQueue, edgeQueue);//right
-	Face *f4=new Face(*v2, *v6, *v7, *v3, vertexQueue, edgeQueue);//front
-	Face *f5=new Face(*v0, *v4, *v5, *v1, vertexQueue, edgeQueue);//back
+	Face *f0=new Face(v0, v1, v2, v3, vertexQueue, edgeQueue);//top
+	Face *f1=new Face(v7, v6, v5, v4, vertexQueue, edgeQueue);//bottom
+	Face *f2=new Face(v1, v5, v6, v2, vertexQueue, edgeQueue);//left
+	Face *f3=new Face(v0, v3, v7, v4, vertexQueue, edgeQueue);//right
+	Face *f4=new Face(v2, v6, v7, v3, vertexQueue, edgeQueue);//front
+	Face *f5=new Face(v0, v4, v5, v1, vertexQueue, edgeQueue);//back
 
 	faceQueue.push_back(f0);
 	faceQueue.push_back(f1);
@@ -143,6 +144,7 @@ bool subdivision(deque<Face *> &faceQueue,
 				 deque<Vertex *> &vertexQueue, 
 				 int l)
 {
+	l = (l<=3)?l:3;
 	Face *f = faceQueue.front();
 	int currentLevel = f->level;
 	while (f->level < l)
@@ -153,24 +155,43 @@ bool subdivision(deque<Face *> &faceQueue,
 		//	(d, edge_pointda, face_pointabcd, edge_pointcd)
 
 		// 1. Calculate face point
-		Vertex *face_point = new Vertex(f->fMidVertex, f->level+1);
+		//Vertex *face_point = new Vertex(f->fMidVertex, f->level+1);
+
+		//// 2. Calculate edge point
+		//Vertex *edge_point1 = new Vertex(f->fEdgeList[0]->calEdgePoint(), f->level + 1);
+		//Vertex *edge_point2 = new Vertex(f->fEdgeList[1]->calEdgePoint(), f->level + 1);
+		//Vertex *edge_point3 = new Vertex(f->fEdgeList[2]->calEdgePoint(), f->level + 1);
+		//Vertex *edge_point4 = new Vertex(f->fEdgeList[3]->calEdgePoint(), f->level + 1);
+
+		//// 3. Calculate vertex point
+		//Vertex *vertex_point1 = new Vertex(f->fVertexList[0]->calVertexPoint(), f->level + 1);
+		//Vertex *vertex_point2 = new Vertex(f->fVertexList[1]->calVertexPoint(), f->level + 1);
+		//Vertex *vertex_point3 = new Vertex(f->fVertexList[2]->calVertexPoint(), f->level + 1);
+		//Vertex *vertex_point4 = new Vertex(f->fVertexList[3]->calVertexPoint(), f->level + 1);
+
+		//faceQueue.push_back(new Face(*face_point, *edge_point1, *vertex_point2, *edge_point2, vertexQueue, edgeQueue, f->level + 1));
+		//faceQueue.push_back(new Face(*face_point, *edge_point2, *vertex_point3, *edge_point3, vertexQueue, edgeQueue, f->level + 1));
+		//faceQueue.push_back(new Face(*face_point, *edge_point3, *vertex_point4, *edge_point4, vertexQueue, edgeQueue, f->level + 1));
+		//faceQueue.push_back(new Face(*face_point, *edge_point4, *vertex_point1, *edge_point1, vertexQueue, edgeQueue, f->level + 1));
+
+		Vertex *face_pointabcd = new Vertex(f->fMidVertex, f->level + 1);
 
 		// 2. Calculate edge point
-		Vertex *edge_point1 = new Vertex(f->fEdgeList[0]->calEdgePoint(), f->level + 1);
-		Vertex *edge_point2 = new Vertex(f->fEdgeList[1]->calEdgePoint(), f->level + 1);
-		Vertex *edge_point3 = new Vertex(f->fEdgeList[2]->calEdgePoint(), f->level + 1);
-		Vertex *edge_point4 = new Vertex(f->fEdgeList[3]->calEdgePoint(), f->level + 1);
+		Vertex *edge_pointab = new Vertex(f->fEdgeList[0]->calEdgePoint(), f->level + 1);
+		Vertex *edge_pointbc = new Vertex(f->fEdgeList[1]->calEdgePoint(), f->level + 1);
+		Vertex *edge_pointcd = new Vertex(f->fEdgeList[2]->calEdgePoint(), f->level + 1);
+		Vertex *edge_pointda = new Vertex(f->fEdgeList[3]->calEdgePoint(), f->level + 1);
 
 		// 3. Calculate vertex point
-		Vertex *vertex_point1 = new Vertex(f->fVertexList[0]->calVertexPoint(), f->level + 1);
-		Vertex *vertex_point2 = new Vertex(f->fVertexList[1]->calVertexPoint(), f->level + 1);
-		Vertex *vertex_point3 = new Vertex(f->fVertexList[2]->calVertexPoint(), f->level + 1);
-		Vertex *vertex_point4 = new Vertex(f->fVertexList[3]->calVertexPoint(), f->level + 1);
+		Vertex *a = new Vertex(f->fVertexList[0]->calVertexPoint(), f->level + 1);
+		Vertex *b = new Vertex(f->fVertexList[1]->calVertexPoint(), f->level + 1);
+		Vertex *c = new Vertex(f->fVertexList[2]->calVertexPoint(), f->level + 1);
+		Vertex *d = new Vertex(f->fVertexList[3]->calVertexPoint(), f->level + 1);
 
-		faceQueue.push_back(new Face(*face_point, *edge_point1, *vertex_point2, *edge_point2, vertexQueue, edgeQueue, f->level + 1));
-		faceQueue.push_back(new Face(*face_point, *edge_point2, *vertex_point3, *edge_point3, vertexQueue, edgeQueue, f->level + 1));
-		faceQueue.push_back(new Face(*face_point, *edge_point3, *vertex_point4, *edge_point4, vertexQueue, edgeQueue, f->level + 1));
-		faceQueue.push_back(new Face(*face_point, *edge_point4, *vertex_point1, *edge_point1, vertexQueue, edgeQueue, f->level + 1));
+		faceQueue.push_back(new Face(a, edge_pointab, face_pointabcd, edge_pointda, vertexQueue, edgeQueue, f->level + 1));
+		faceQueue.push_back(new Face(b, edge_pointbc, face_pointabcd, edge_pointab, vertexQueue, edgeQueue, f->level + 1));
+		faceQueue.push_back(new Face(c, edge_pointcd, face_pointabcd, edge_pointbc, vertexQueue, edgeQueue, f->level + 1));
+		faceQueue.push_back(new Face(d, edge_pointda, face_pointabcd, edge_pointcd, vertexQueue, edgeQueue, f->level + 1));
 
 		faceQueue.pop_front();
 		// Get the next face to be subdivided
@@ -199,7 +220,7 @@ int main(int argc, char *argv[])
 
 	initLight();
 	initGeo();
-	subdivision(faceQueue,edgeQueue,vertexQueue, 2);
+	subdivision(faceQueue,edgeQueue,vertexQueue, 4);
 
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);

@@ -116,11 +116,11 @@ public:
 	//	level = l;
 	//}
 	void addEdge(Vertex &v1, Vertex &v2, deque<Edge *> &edgeQueue);
-	void addVertex(Vertex &v1, deque<Vertex *> &vertexQueue);
+	void addVertex(Vertex *&v, deque<Vertex *> &vertexQueue);
 
-	Face(Vertex &v1, Vertex &v2, Vertex &v3, Vertex &v4, deque<Vertex *> &vertexQueue, deque<Edge *> &edgeQueue, int l = 0)
+	Face(Vertex *&v1, Vertex *&v2, Vertex *&v3, Vertex *&v4, deque<Vertex *> &vertexQueue, deque<Edge *> &edgeQueue, int l = 0)
 	{		
-		fMidVertex = (v1.Pos + v2.Pos + v3.Pos + v4.Pos) / 4;
+		fMidVertex = ((*v1).Pos + (*v2).Pos + (*v3).Pos + (*v4).Pos) / 4;
 		level = l;
 		//// Vertex
 		//v1.vFaceList.push_back(this);
@@ -140,10 +140,10 @@ public:
 		addVertex(v3, vertexQueue);
 		addVertex(v4, vertexQueue);
 
-		addEdge(v1, v2, edgeQueue);
-		addEdge(v2, v3, edgeQueue);
-		addEdge(v3, v4, edgeQueue);
-		addEdge(v4, v1, edgeQueue);
+		addEdge(*v1, *v2, edgeQueue);
+		addEdge(*v2, *v3, edgeQueue);
+		addEdge(*v3, *v4, edgeQueue);
+		addEdge(*v4, *v1, edgeQueue);
 		
 		//Edge *e1 = new Edge(v1, v2);
 		//Edge *e2 = new Edge(v2, v3);

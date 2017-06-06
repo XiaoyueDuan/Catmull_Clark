@@ -2,12 +2,15 @@
 #include "GL\glut.h"
 #include "Find.h"
 #include <math.h>
+#include <iostream>
 
-float Epsilon = 1e-6;
+float Epsilon = 1e-8;
 
 Vec3f Vertex::calVertexPoint()
 {
 	int n = vEdgeList.size();
+	if (vEdgeList.size() != vFaceList.size())
+		cout << "error!\t" << "Edge"<< vEdgeList.size() << "\tFace" << vFaceList.size() << endl;
 
 	// 1.Consider face vertex
 	Vec3f face_point(0);
@@ -72,20 +75,16 @@ void Face::show()
 		glVertex3f(fVertexList[i]->Pos.x, fVertexList[i]->Pos.y, fVertexList[i]->Pos.z);
 }
 
-void Face::addVertex(Vertex &v, deque<Vertex *> &vertexQueue)
+void Face::addVertex(Vertex *&v, deque<Vertex *> &vertexQueue)
 {
-	Vertex *pos = findVertex(v, vertexQueue);
-	Vertex *v1 = nullptr;
-	if (pos != nullptr)//vertex exist	
-		v1 = pos;
-	else
-	{
-		//vertex does not exist	
-		v1 = &v;
-		vertexQueue.push_back(v1);
-	}
-	fVertexList.push_back(v1);
-	v1->vFaceList.push_back(this);
+	Vertex *pos = findVertex(*v, vertexQueue);
+	if (pos != nullptr)//vertex exist		
+		v = pos;			
+	else	
+		//vertex does not exist			
+		vertexQueue.push_back(v);
+	fVertexList.push_back(v);
+	v->vFaceList.push_back(this);
 }
 
 void Face::addEdge(Vertex &v1, Vertex &v2, deque<Edge *> &edgeQueue)
@@ -94,7 +93,7 @@ void Face::addEdge(Vertex &v1, Vertex &v2, deque<Edge *> &edgeQueue)
 	Edge *pos = findEdge(Edge(v1, v2, -1), edgeQueue);
 	Edge *e1 = nullptr;
 	if (pos != nullptr)//edge exist	
-		e1 = pos;
+		e1 = pos;	
 	else
 	{
 		//edge does not exist	
