@@ -85,36 +85,6 @@ public:
 	// Indicate the subdivision level, 0 represents no subdivision occurs
 	int level = 0;
 
-	//Face(Vertex &v1, Vertex &v2, Vertex &v3, int l=0)
-	//{
-	//	// Vertex
-	//	v1.vFaceList.push_back(this);
-	//	v2.vFaceList.push_back(this);
-	//	v3.vFaceList.push_back(this);
-	//
-	//	// Face
-	//	tri = true;
-	//	fVertexList.push_back(&v1);
-	//	fVertexList.push_back(&v2);
-	//	fVertexList.push_back(&v3);
-	//
-	//	Edge *e1 = new Edge(v1, v2);
-	//	Edge *e2 = new Edge(v2, v3);
-	//	Edge *e3 = new Edge(v3, v1);
-	//
-	//	fEdgeList.push_back(e1);
-	//	fEdgeList.push_back(e2);
-	//	fEdgeList.push_back(e3);
-	//
-	//	// Edge
-	//	e1->eFaceList.push_back(this);
-	//	e2->eFaceList.push_back(this);
-	//	e3->eFaceList.push_back(this);
-	//
-	//	setNormal();
-	//	fMidVertex = (v1.Pos + v2.Pos + v3.Pos ) / 3;
-	//	level = l;
-	//}
 	void addEdge(Vertex &v1, Vertex &v2, deque<Edge *> &edgeQueue);
 	void addVertex(Vertex *&v, deque<Vertex *> &vertexQueue);
 
@@ -122,18 +92,6 @@ public:
 	{		
 		fMidVertex = ((*v1).Pos + (*v2).Pos + (*v3).Pos + (*v4).Pos) / 4;
 		level = l;
-		//// Vertex
-		//v1.vFaceList.push_back(this);
-		//v2.vFaceList.push_back(this);
-		//v3.vFaceList.push_back(this);
-		//v4.vFaceList.push_back(this);
-
-		//// Face
-		//quad = true;
-		//fVertexList.push_back(&v1);
-		//fVertexList.push_back(&v2);
-		//fVertexList.push_back(&v3);
-		//fVertexList.push_back(&v4);
 
 		addVertex(v1, vertexQueue);
 		addVertex(v2, vertexQueue);
@@ -145,22 +103,6 @@ public:
 		addEdge(*v3, *v4, edgeQueue);
 		addEdge(*v4, *v1, edgeQueue);
 		
-		//Edge *e1 = new Edge(v1, v2);
-		//Edge *e2 = new Edge(v2, v3);
-		//Edge *e3 = new Edge(v3, v4);
-		//Edge *e4 = new Edge(v4, v1);
-		//
-		//fEdgeList.push_back(e1);
-		//fEdgeList.push_back(e2);
-		//fEdgeList.push_back(e3);
-		//fEdgeList.push_back(e4);
-		//
-		//// Edge
-		//e1->eFaceList.push_back(this);
-		//e2->eFaceList.push_back(this);
-		//e3->eFaceList.push_back(this);
-		//e4->eFaceList.push_back(this);		
-
 		setNormal();
 	}
 

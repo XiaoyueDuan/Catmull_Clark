@@ -23,10 +23,9 @@ void reshape(int w, int h)
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);	
 	glLoadIdentity();	
 	gluPerspective(60.0, (GLdouble)w / (GLdouble)h, 1.0, 100.0);
-	//glOrtho(-Ortho*scale, Ortho*scale, -Ortho, Ortho,1.0,10.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(2, 2, 0, 0, 0, 0, 0, 1, 0);
+	gluLookAt(2, 2, 2, 0, 0, 0, 0, 1, 0);
 }
 
 void display()
@@ -41,7 +40,7 @@ void display()
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, cube_mat_diffuse);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, cube_mat_specular);
 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glPushMatrix();	
 	{
 		glRotatef(angleX, 1.0f, 0.0f, 0.0f);
@@ -94,7 +93,7 @@ void initLight()
 	glFlush();
 
 	glEnable(GL_DEPTH_TEST);
-	//glShadeModel(GL_SMOOTH);
+	glShadeModel(GL_SMOOTH);
 	
 	glEnable(GL_LIGHT0);
 	// Add light
@@ -153,27 +152,6 @@ bool subdivision(deque<Face *> &faceQueue,
 		//	(b, edge_pointbc, face_pointabcd, edge_pointab)
 		//	(c, edge_pointcd, face_pointabcd, edge_pointbc)
 		//	(d, edge_pointda, face_pointabcd, edge_pointcd)
-
-		// 1. Calculate face point
-		//Vertex *face_point = new Vertex(f->fMidVertex, f->level+1);
-
-		//// 2. Calculate edge point
-		//Vertex *edge_point1 = new Vertex(f->fEdgeList[0]->calEdgePoint(), f->level + 1);
-		//Vertex *edge_point2 = new Vertex(f->fEdgeList[1]->calEdgePoint(), f->level + 1);
-		//Vertex *edge_point3 = new Vertex(f->fEdgeList[2]->calEdgePoint(), f->level + 1);
-		//Vertex *edge_point4 = new Vertex(f->fEdgeList[3]->calEdgePoint(), f->level + 1);
-
-		//// 3. Calculate vertex point
-		//Vertex *vertex_point1 = new Vertex(f->fVertexList[0]->calVertexPoint(), f->level + 1);
-		//Vertex *vertex_point2 = new Vertex(f->fVertexList[1]->calVertexPoint(), f->level + 1);
-		//Vertex *vertex_point3 = new Vertex(f->fVertexList[2]->calVertexPoint(), f->level + 1);
-		//Vertex *vertex_point4 = new Vertex(f->fVertexList[3]->calVertexPoint(), f->level + 1);
-
-		//faceQueue.push_back(new Face(*face_point, *edge_point1, *vertex_point2, *edge_point2, vertexQueue, edgeQueue, f->level + 1));
-		//faceQueue.push_back(new Face(*face_point, *edge_point2, *vertex_point3, *edge_point3, vertexQueue, edgeQueue, f->level + 1));
-		//faceQueue.push_back(new Face(*face_point, *edge_point3, *vertex_point4, *edge_point4, vertexQueue, edgeQueue, f->level + 1));
-		//faceQueue.push_back(new Face(*face_point, *edge_point4, *vertex_point1, *edge_point1, vertexQueue, edgeQueue, f->level + 1));
-
 		Vertex *face_pointabcd = new Vertex(f->fMidVertex, f->level + 1);
 
 		// 2. Calculate edge point
@@ -220,7 +198,7 @@ int main(int argc, char *argv[])
 
 	initLight();
 	initGeo();
-	subdivision(faceQueue,edgeQueue,vertexQueue, 4);
+	subdivision(faceQueue,edgeQueue,vertexQueue, 0);
 
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);

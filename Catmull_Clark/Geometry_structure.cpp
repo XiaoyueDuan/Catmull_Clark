@@ -50,11 +50,6 @@ Vec3f Edge::calEdgePoint()
 
 bool Edge::operator==(const Edge &e)
 {
-	//if (level == e.level &&
-	//	((eVertexList[0] == e.eVertexList[0] && eVertexList[1] == e.eVertexList[1]) ||
-	//	(eVertexList[0] == e.eVertexList[1] && eVertexList[1] == e.eVertexList[0])))
-	//	return true;
-
 	// Edge1.v1==Edge2.v1 && Edge1.v2==Edge2.v2
 	bool v1v1 = (*eVertexList[0]) == (*e.eVertexList[0]);
 	bool v2v2 = (*eVertexList[1]) == (*e.eVertexList[1]);
@@ -100,7 +95,6 @@ void Face::addEdge(Vertex &v1, Vertex &v2, deque<Edge *> &edgeQueue)
 		e1 = new Edge(v1, v2, level);
 		edgeQueue.push_back(e1);
 	}		
-	// Edge *e1 = (pos != edgeQueue.end()) ? *pos : new Edge(v1, v2);
 	fEdgeList.push_back(e1);
 	e1->eFaceList.push_back(this);
 }
