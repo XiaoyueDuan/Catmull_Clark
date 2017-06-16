@@ -40,7 +40,7 @@ void display()
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, cube_mat_diffuse);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, cube_mat_specular);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glPushMatrix();	
 	{
 		glRotatef(angleX, 1.0f, 0.0f, 0.0f);
@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
 
 	initLight();
 	initGeo();
-	subdivision(faceQueue,edgeQueue,vertexQueue, 0);
+	subdivision(faceQueue,edgeQueue,vertexQueue, 2);
 
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
