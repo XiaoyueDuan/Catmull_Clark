@@ -1,1 +1,0 @@
-# Catmull_Clark
